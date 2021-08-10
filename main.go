@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -25,7 +26,11 @@ func main() {
 }
 
 func runHello(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("Hello Cuvva!"))
+	name := os.Getenv("name")
+	if name == "" {
+		name = "Cuvva"
+	}
+	_, _ = w.Write([]byte(fmt.Sprintf("Hello %s!", name)))
 	return
 }
 

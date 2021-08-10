@@ -11,5 +11,4 @@ COPY *.go ./
 RUN go build -o /hello-argo
 
 EXPOSE 8080
-
-CMD [ "/hello-argo" ]
+ENTRYPOINT ["/hello-argo"]
