@@ -27,6 +27,7 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    if: success()
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -50,3 +51,12 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Trigger deployment
+        if: success()
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: tgmendes/argo-config
+          event-type: trigger_deployment
+          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}}'
