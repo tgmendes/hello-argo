@@ -52,9 +52,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: dump meta
-        run: echo ${{ toJSON(steps.meta.outputs.tags) }}
-
       - name: Trigger deployment
         if: success()
         uses: peter-evans/repository-dispatch@v1
@@ -62,4 +59,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
