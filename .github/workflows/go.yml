@@ -44,6 +44,13 @@ jobs:
         with:
           images: tgmendes/hello-argo
 
+      - name: Extract labels
+        id: set_labels
+        env:
+          json_labels: ${{ toJSON(github.event.pull_request.labels) }}
+        run: |
+          echo ::set-output name=json_labels::'${{ $json_labels | jq "[.[] | {name: .name}]" }}'
+
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -59,4 +66,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) | jq "[.[] | {name: .name}]" }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
+          client-payload: '{"labels": ${{ steps.set_labels.outputs.json_labels}}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
