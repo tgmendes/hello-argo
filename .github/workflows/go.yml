@@ -59,4 +59,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) | jq "[.[] | {name: .name}]" }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
