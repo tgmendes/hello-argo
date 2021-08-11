@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /hello-argo
+RUN GOARCH=amd64 go build -o /hello-argo
 
 EXPOSE 8080
 ENTRYPOINT ["/hello-argo"]
