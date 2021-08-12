@@ -10,7 +10,7 @@ func main() {
 	servicePtr := flag.String("service", "svc-hello", "service to run")
 	flag.Parse()
 
-	if *servicePtr == "hello" {
+	if *servicePtr == "svc-hello" {
 		app.RunHello(*servicePtr, ":8080")
 	} else {
 		app.RunCarValue(*servicePtr, ":8080")
