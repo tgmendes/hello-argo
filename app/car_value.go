@@ -33,6 +33,7 @@ func RunCarValue(cmdFlag string, port string) {
 func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 	commitHash := os.Getenv("COMMIT_HASH")
 	model := chi.URLParam(r, "model")
+
 	if model == "" {
 		model = "random"
 	}
