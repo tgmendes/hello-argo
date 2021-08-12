@@ -6,15 +6,15 @@ on:
   pull_request:
     branches:
       - "**"
-  issue_comment:
-    types: [created]
+    types:
+      - labeled
 
 jobs:
   build:
     runs-on: ubuntu-latest
     if: |
-      github.event_name != 'issue_comment' ||
-      github.event.comment.body == 'ok deploy'
+      github.event.action != 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'deploy')
     steps:
     - name: Dump GitHub context
       env:
@@ -38,9 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.ref == 'refs/heads/main' ||
-      (github.event_name == 'issue_comment' &&
-      github.event.comment.body == 'ok deploy' &&
-      join(github.event.issue.labels.*.name, ', ') != '')
+      (github.event.action == 'labeled' &&
+      contains(github.event.pull_request.labels.*.name, 'deploy'))
     needs: [ build ]
     steps:
       - name: Check out the repo
@@ -75,4 +74,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
