@@ -40,7 +40,7 @@ jobs:
       github.ref == 'refs/heads/main' ||
       (github.event_name == 'issue_comment' &&
       github.event.comment.body == 'ok deploy' &&
-      join(github.event.pull_request.labels.*.name, ', ') != '')
+      join(github.event.issue.labels.*.name, ', ') != '')
     needs: [ build ]
     steps:
       - name: Log in to Docker Hub
