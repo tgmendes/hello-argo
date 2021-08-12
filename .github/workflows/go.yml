@@ -8,13 +8,17 @@ on:
       - "**"
     types:
       - labeled
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   build:
     runs-on: ubuntu-latest
     if: |
       github.event.action != 'labeled' ||
-      contains(github.event.pull_request.labels.*.name, 'deploy')
+      (github.event.pull_request.labels[2] != null &&
+      contains(github.event.pull_request.labels.*.name, 'deploy'))
     steps:
     - name: Dump GitHub context
       env:
@@ -39,6 +43,7 @@ jobs:
     if: |
       github.ref == 'refs/heads/main' ||
       (github.event.action == 'labeled' &&
+      github.event.pull_request.labels[2] != null &&
       contains(github.event.pull_request.labels.*.name, 'deploy'))
     needs: [ build ]
     steps:
