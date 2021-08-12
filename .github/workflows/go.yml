@@ -6,7 +6,7 @@ on:
   pull_request:
     branches:
       - "**"
-    types: [ "labeled", "synchronize" ]
+    types: [ "labeled", "synchronize", "closed" ]
 
 jobs:
   build:
