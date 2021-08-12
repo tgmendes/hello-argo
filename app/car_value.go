@@ -11,26 +11,34 @@ import (
 	"time"
 )
 
-func RunCarValue() {
-	commitHash := os.Getenv("COMMIT_HASH")
+func RunCarValue(cmdFlag string, port string) {
 	log.Println("Botting up car value app...")
-	log.Printf("Commit hash: %s\n", commitHash)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Get("/{model}", carValue)
+	r.Get("/{model}", func(w http.ResponseWriter, r *http.Request) {
+		carValue(w, r, cmdFlag)
+	})
 
-	log.Println("Listening on port :8080")
-	_ = http.ListenAndServe(":8080", r)
+	log.Printf("Listening on port %s", port)
+	_ = http.ListenAndServe(port, r)
 }
 
-func carValue(w http.ResponseWriter, r *http.Request) {
+func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
+	commitHash := os.Getenv("COMMIT_HASH")
 	model := chi.URLParam(r, "model")
 
 	rand.Seed(time.Now().Unix())
 	lowerValue := 500
 	upperValue := 100000
 	value := rand.Intn(upperValue-lowerValue) + lowerValue
-	resp := fmt.Sprintf("Your car %s is worth £%d", model, value)
-	_, _ = w.Write([]byte(resp))
+
+	carMsg := `<h1>🚗 Car Valuation Service 🏎</h1>
+<hr \>
+<p>🤑 Based on our calculations, this is what your %s is worth: £%d 🎉</p>
+
+<p>📱 Running on the following commit hash: %s.</p>
+`
+	carMsgB := []byte(fmt.Sprintf(carMsg, model, value, commitHash))
+	_, _ = w.Write(carMsgB)
 }

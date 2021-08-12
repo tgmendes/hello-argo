@@ -9,23 +9,31 @@ import (
 	"os"
 )
 
-func RunHello() {
-	commitHash := os.Getenv("COMMIT_HASH")
+func RunHello(cmdFlag string, port string) {
 	log.Println("Botting up hello app...")
-	log.Printf("Commit hash: %s\n", commitHash)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Get("/", hello)
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		hello(w, cmdFlag)
+	})
 
-	log.Println("Listening on port :8080")
-	_ = http.ListenAndServe(":8080", r)
+	log.Printf("Listening on port %s\n", port)
+	_ = http.ListenAndServe(port, r)
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
+func hello(w http.ResponseWriter, cmdFlag string) {
+	commitHash := os.Getenv("COMMIT_HASH")
 	name := os.Getenv("name")
 	if name == "" {
 		name = "Cuvva"
 	}
-	_, _ = w.Write([]byte(fmt.Sprintf("Hello %s!", name)))
+	helloMsg := `<h1>Hello %s! 🙌</h1>
+<hr \>
+<p>🎉 This service was invoked from main with the %s command.</p>
+
+<p>📱 This is running on the following commit hash: %s.</p>
+`
+	helloMsgB := []byte(fmt.Sprintf(helloMsg, name, cmdFlag, commitHash))
+	_, _ = w.Write(helloMsgB)
 }

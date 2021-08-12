@@ -10,8 +10,8 @@ func main() {
 	flag.Parse()
 
 	if *servicePtr == "hello" {
-		app.RunHello()
+		app.RunHello(*servicePtr, ":8081")
 	} else {
-		app.RunCarValue()
+		app.RunCarValue(*servicePtr, ":8081")
 	}
 }
