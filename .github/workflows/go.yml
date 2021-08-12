@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.event.name == 'issue_comment' &&
-      github.event.comment.body == '@deploy' &&
+      github.event.comment.body == 'deploy ok' &&
       join(github.event.pull_request.labels.*.name, ', ') != ''
     needs: [ build ]
     steps:
