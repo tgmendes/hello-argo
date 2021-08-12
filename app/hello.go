@@ -2,11 +2,12 @@ package app
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func RunHello(cmdFlag string, port string) {
@@ -28,12 +29,27 @@ func hello(w http.ResponseWriter, cmdFlag string) {
 	if name == "" {
 		name = "Cuvva"
 	}
+	gif := getHelloGIF()
 	helloMsg := `<h1>Hello %s! 🙌</h1>
+<div>
+<iframe src="%s" frameborder="0" width="800"></iframe>
+</div>
 <hr \>
 <p>🎉 This service was invoked from main with the %s command.</p>
 
 <p>📱 This is running on the following commit hash: %s.</p>
 `
-	helloMsgB := []byte(fmt.Sprintf(helloMsg, name, cmdFlag, commitHash))
+	helloMsgB := []byte(fmt.Sprintf(helloMsg, name, gif, cmdFlag, commitHash))
 	_, _ = w.Write(helloMsgB)
+}
+
+func getHelloGIF() string {
+	cl := GiphyClient{
+		APIKey: "UwelgUbg9VUspxHAf3E8XXfvo1ZE8z5F",
+		URL:    "https://api.giphy.com/v1/gifs/random",
+	}
+
+	gif, _ := cl.FetchGIF("hello")
+
+	return gif
 }

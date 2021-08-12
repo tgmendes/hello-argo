@@ -2,13 +2,14 @@ package app
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func RunCarValue(cmdFlag string, port string) {
@@ -32,13 +33,30 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 	lowerValue := 500
 	upperValue := 100000
 	value := rand.Intn(upperValue-lowerValue) + lowerValue
+	gif := getCarGIF()
 
 	carMsg := `<h1>🚗 Car Valuation Service 🏎</h1>
+<div>
+<iframe src="%s" frameborder="0" width="800"></iframe>
+</div>
 <hr \>
 <p>🤑 Based on our calculations, this is what your %s is worth: £%d 🎉</p>
 
 <p>📱 Running on the following commit hash: %s.</p>
+
+
 `
-	carMsgB := []byte(fmt.Sprintf(carMsg, model, value, commitHash))
+	carMsgB := []byte(fmt.Sprintf(carMsg, gif, model, value, commitHash))
 	_, _ = w.Write(carMsgB)
+}
+
+func getCarGIF() string {
+	cl := GiphyClient{
+		APIKey: "UwelgUbg9VUspxHAf3E8XXfvo1ZE8z5F",
+		URL:    "https://api.giphy.com/v1/gifs/random",
+	}
+
+	gif, _ := cl.FetchGIF("car")
+
+	return gif
 }
