@@ -33,7 +33,7 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 	lowerValue := 500
 	upperValue := 100000
 	value := rand.Intn(upperValue-lowerValue) + lowerValue
-	gif := getCarGIF()
+	gif := getCarGIF(model)
 
 	carMsg := `<h1>🚗 Car Valuation Service 🏎</h1>
 <div>
@@ -50,13 +50,13 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 	_, _ = w.Write(carMsgB)
 }
 
-func getCarGIF() string {
+func getCarGIF(searchTerm string) string {
 	cl := GiphyClient{
 		APIKey: "UwelgUbg9VUspxHAf3E8XXfvo1ZE8z5F",
 		URL:    "https://api.giphy.com/v1/gifs/random",
 	}
 
-	gif, _ := cl.FetchGIF("car")
+	gif, _ := cl.FetchGIF(searchTerm)
 
 	return gif
 }
