@@ -6,7 +6,7 @@ on:
   pull_request:
     branches:
       - "**"
-  issue_comment:
+  pull_request_review_comment:
     types: [ created ]
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
-    if: github.event.name == 'issue_comment'
+    if: github.event.name == 'pull_request_review_comment'
     needs: [ build ]
     steps:
       - name: echo
