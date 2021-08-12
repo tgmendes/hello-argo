@@ -17,6 +17,11 @@ func RunCarValue(cmdFlag string, port string) {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		carValue(w, r, cmdFlag)
+	})
+
 	r.Get("/{model}", func(w http.ResponseWriter, r *http.Request) {
 		carValue(w, r, cmdFlag)
 	})
@@ -28,6 +33,10 @@ func RunCarValue(cmdFlag string, port string) {
 func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 	commitHash := os.Getenv("COMMIT_HASH")
 	model := chi.URLParam(r, "model")
+
+	if model == "" {
+		model = "random"
+	}
 
 	rand.Seed(time.Now().Unix())
 	lowerValue := 500
