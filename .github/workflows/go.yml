@@ -16,8 +16,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: |
-      github.event.name != 'pull_request_review_comment' ||
-      github.event.comment.body == '/deploy'
+      github.event_name != 'pull_request_review_comment' ||
+      (github.event.issue.pull_request && github.event.comment.body == '/deploy')
     steps:
     - uses: actions/checkout@v2
 
@@ -36,7 +36,8 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     if: |
-      github.event.name == 'pull_request_review_comment' &&
+      github.event_name == 'pull_request_review_comment' &&
+      github.event.comment.body == '/deploy' &&
       join(github.event.pull_request.labels.*.name, ', ') != ''
     needs: [ build ]
     steps:
