@@ -1,0 +1,16 @@
+Name: Merge
+
+on:
+  pull_request:
+    branches:
+      - '**'
+#    types: [closed]
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
