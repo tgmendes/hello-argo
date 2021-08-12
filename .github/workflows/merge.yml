@@ -1,18 +1,15 @@
 name: Merge
 
 on:
-  push:
-    branches:
-      - '**'
   pull_request:
     branches:
       - '**'
-#    types: [closed]
+    types: [closed]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-#    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     steps:
       - name: Dump GitHub context
         env:
