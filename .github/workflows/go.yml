@@ -30,6 +30,7 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     if: join(github.event.pull_request.labels.*.name, ', ') != ''
+    needs: [ build ]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
