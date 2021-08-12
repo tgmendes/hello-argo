@@ -20,10 +20,6 @@ jobs:
       (github.event.pull_request.labels[2] != null &&
       contains(github.event.pull_request.labels.*.name, 'deploy'))
     steps:
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
     - uses: actions/checkout@v2
 
     - name: Set up Go
