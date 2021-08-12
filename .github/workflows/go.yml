@@ -43,6 +43,9 @@ jobs:
       join(github.event.issue.labels.*.name, ', ') != '')
     needs: [ build ]
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -72,4 +75,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
