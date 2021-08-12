@@ -32,13 +32,17 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
-    if: |
-      github.ref == 'refs/heads/main' ||
-      (github.event_name == 'issue_comment' &&
-      github.event.comment.body == 'ok deploy' &&
-      join(github.event.pull_request.labels.*.name, ', ') != '')
+#    if: |
+#      github.ref == 'refs/heads/main' ||
+#      (github.event_name == 'issue_comment' &&
+#      github.event.comment.body == 'ok deploy' &&
+#      join(github.event.pull_request.labels.*.name, ', ') != '')
     needs: [ build ]
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
