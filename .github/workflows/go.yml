@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: |
-      gihub.event.name != 'pull_request_review_comment' ||
+      github.event.name != 'pull_request_review_comment' ||
       github.event.comment.body == '/deploy'
     steps:
     - uses: actions/checkout@v2
