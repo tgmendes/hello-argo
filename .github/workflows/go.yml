@@ -13,7 +13,11 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    if: github.event_name != 'issue_comment' || github.event.comment.body == '!deploy'
+    if: |
+      github.event_name != 'issue_comment' ||
+      (github.event.comment.body == '!deploy' &&
+        contains(join(github.event.issue.labels.*.name, ' '), 'env-') &&
+        contains(join(github.event.issue.labels.*.name, ' '), 'svc-'))
     steps:
     - uses: actions/checkout@v2
 
@@ -37,7 +41,7 @@ jobs:
       contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ build ]
     outputs:
-      tags: ${{ steps.build.outputs.tags }}
+      tags: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -57,7 +61,6 @@ jobs:
             type=sha,format=long,prefix=
 
       - name: Build and push Docker image
-        id: build
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
