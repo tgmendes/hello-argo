@@ -77,13 +77,8 @@ jobs:
       contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ push ]
     steps:
-      - name: GitCtx
-        run: |
-          echo "$GITHUB_CONTEXT"
-          echo "$IMG"
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-          IMG: ${{ needs.push.outputs.img }}
+      - name: Debug
+        run: echo ${{ needs.push.outputs.img }}
 
       - name: Trigger deployment
         uses: peter-evans/repository-dispatch@v1
