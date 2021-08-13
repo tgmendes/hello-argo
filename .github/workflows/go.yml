@@ -77,13 +77,8 @@ jobs:
       contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ push ]
     steps:
-      - name: GitCtx
-        run: |
-          echo "$GITHUB_CONTEXT"
-          echo "$IMG"
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-          IMG: ${{ needs.push.outputs.img }}
+      - name: Debug
+        run: echo ${{ needs.push.outputs.img }}
 
       - name: Trigger deployment
         uses: peter-evans/repository-dispatch@v1
@@ -91,4 +86,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}, "tags": ${{ toJSON(needs.push.outputs.img) }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": ${{ toJSON(needs.push.outputs.img) }}}'
