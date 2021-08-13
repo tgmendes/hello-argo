@@ -19,7 +19,8 @@ jobs:
         contains(join(github.event.issue.labels.*.name, ' '), 'env-') &&
         contains(join(github.event.issue.labels.*.name, ' '), 'svc-'))
     steps:
-    - uses: actions/checkout@v2
+    - name: Check out the repo
+      uses: actions/checkout@v2
 
     - name: Set up Go
       uses: actions/setup-go@v2
@@ -66,6 +67,14 @@ jobs:
       contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ push ]
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: GitCtx
+        run: echo "$GITHUB_CONTEXT"
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+
       - name: Trigger deployment
         uses: peter-evans/repository-dispatch@v1
         with:
