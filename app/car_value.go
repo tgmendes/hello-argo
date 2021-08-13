@@ -44,12 +44,12 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 	value := rand.Intn(upperValue-lowerValue) + lowerValue
 	gif := getCarGIF(model)
 
-	carMsg := `<h1>🚗 Car Valuation Service! 🏎</h1>
+	carMsg := `<h1>🚗 Car Valuation service! 🏎</h1>
 <div>
 <iframe src="%s" frameborder="0" width="800"></iframe>
 </div>
 <hr \>
-<p>🤑 Based on our calculations, this is what your <strong>%s</strong> is worth: £%d 🎉</p>
+<p>🤑 Based on our calculations, this is what your <strong>%s</strong> is worth: <strong>£%d</strong> 🎉</p>
 
 <p>📱 Running on the following commit hash: <strong>%s</strong>.</p>
 
