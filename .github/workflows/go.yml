@@ -40,8 +40,6 @@ jobs:
       contains(join(github.event.issue.labels.*.name, ' '), 'env-') &&
       contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ build ]
-    outputs:
-      tags: ${{ toJSON(steps.meta.outputs.tags) }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -52,21 +50,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: tgmendes/hello-argo
-          tags: |
-            type=sha,format=long,prefix=
-
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: tgmendes/hello-argo:${{ github.sha }}
 
   deploy:
     name: Deploy
@@ -77,13 +66,10 @@ jobs:
       contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ push ]
     steps:
-      - name: Debug
-        run: echo ${{ needs.push.outputs.tags }}
-
       - name: Trigger deployment
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": ${{ needs.push.outputs.tags }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": "tgmendes/hello-argo:${{ github.sha }}"}'
