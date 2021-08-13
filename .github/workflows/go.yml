@@ -5,20 +5,15 @@ on:
     branches: [ main ]
   pull_request:
     branches:
-      - "**"
-    types:
-      - labeled
-      - opened
-      - reopened
-      - synchronize
+      - '**'
+  issue_comment:
+    types: [ created ]
 
 jobs:
   build:
+    name: Build and test
     runs-on: ubuntu-latest
-    if: |
-      github.event.action != 'labeled' ||
-      (github.event.pull_request.labels[2] != null &&
-      contains(github.event.pull_request.labels.*.name, 'deploy'))
+    if: github.event_name != 'issue_comment' || github.event.comment.body == '!deploy'
     steps:
     - uses: actions/checkout@v2
 
@@ -33,15 +28,16 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-  push_to_registry:
+  push:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     if: |
-      github.ref == 'refs/heads/main' ||
-      (github.event.action == 'labeled' &&
-      github.event.pull_request.labels[2] != null &&
-      contains(github.event.pull_request.labels.*.name, 'deploy'))
+      github.event.comment.body == '!deploy' &&
+      contains(join(github.event.issue.labels.*.name, ' '), 'env-') &&
+      contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ build ]
+    outputs:
+      tags: ${{ steps.build.outputs.tags }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -61,6 +57,7 @@ jobs:
             type=sha,format=long,prefix=
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
@@ -68,11 +65,19 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: |
+      github.event.comment.body == '!deploy' &&
+      contains(join(github.event.issue.labels.*.name, ' '), 'env-') &&
+      contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
+    needs: [ push ]
+    steps:
       - name: Trigger deployment
-        if: success()
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}, "tags": ${{ toJSON(steps.meta.outputs.tags) }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.pull_request.labels) }}, "tags": ${{ toJSON(needs.push.outputs.tags) }}}'
