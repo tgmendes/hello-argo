@@ -70,10 +70,8 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: GitCtx
-        run: echo "$GITHUB_CONTEXT"
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
+      - name: Get commit hash
+        run: echo $(git rev-parse HEAD)
 
       - name: Trigger deployment
         uses: peter-evans/repository-dispatch@v1
