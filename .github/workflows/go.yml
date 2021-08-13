@@ -13,7 +13,11 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    if: github.event_name != 'issue_comment' || github.event.comment.body == '!deploy'
+    if: |
+      github.event_name != 'issue_comment' ||
+      (github.event.comment.body == '!deploy' &&
+        contains(join(github.event.issue.labels.*.name, ' '), 'env-') &&
+        contains(join(github.event.issue.labels.*.name, ' '), 'svc-'))
     steps:
     - uses: actions/checkout@v2
 
