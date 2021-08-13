@@ -45,7 +45,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: Checkout Pull Request
+      - name: Checkout PR and set build tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -53,6 +53,7 @@ jobs:
           PR_NUM=${PR_URL##*/}
           echo "Checking out from PR #$PR_NUM based on URL: $PR_URL"
           hub pr checkout $PR_NUM
+          echo "BUILD_TAG=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -65,7 +66,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: tgmendes/hello-argo:${{ github.sha }}
+          tags: tgmendes/hello-argo:${{ env.BUILD_TAG }}
 
   deploy:
     name: Deploy
@@ -79,7 +80,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: Checkout Pull Request
+      - name: Checkout PR and set build tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -87,9 +88,7 @@ jobs:
           PR_NUM=${PR_URL##*/}
           echo "Checking out from PR #$PR_NUM based on URL: $PR_URL"
           hub pr checkout $PR_NUM
-
-      - name: Get commit hash
-        run: echo $(git rev-parse HEAD)
+          echo "BUILD_TAG=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
       - name: Trigger deployment
         uses: peter-evans/repository-dispatch@v1
@@ -97,4 +96,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": "tgmendes/hello-argo:${{ github.sha }}"}'
+          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": "tgmendes/hello-argo:${{ env.BUILD_TAG }}"}'
