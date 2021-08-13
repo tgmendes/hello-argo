@@ -41,7 +41,7 @@ jobs:
       contains(join(github.event.issue.labels.*.name, ' '), 'svc-')
     needs: [ build ]
     outputs:
-      img: ${{ steps.meta.outputs.tags }}
+      tags: ${{ toJSON(steps.meta.outputs.tags) }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -78,7 +78,7 @@ jobs:
     needs: [ push ]
     steps:
       - name: Debug
-        run: echo ${{ needs.push.outputs.img }}
+        run: echo ${{ needs.push.outputs.tags }}
 
       - name: Trigger deployment
         uses: peter-evans/repository-dispatch@v1
@@ -86,4 +86,4 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: tgmendes/argo-config
           event-type: trigger_deployment
-          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": ${{ toJSON(needs.push.outputs.img) }}}'
+          client-payload: '{"labels": ${{ toJSON(github.event.issue.labels) }}, "tags": ${{ needs.push.outputs.tags }}}'
