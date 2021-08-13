@@ -49,7 +49,7 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 <iframe src="%s" frameborder="0" width="800"></iframe>
 </div>
 <hr \>
-<p>🤑 Based on our calculations, this is what your <strong>%s</strong> is worth: £%d 🎉</p>
+<p>🤑 Based on our calculations, this is what your <strong>%s</strong> is worth: <strong>£%d</strong> 🎉</p>
 
 <p>📱 Running on the following commit hash: <strong>%s</strong>.</p>
 
