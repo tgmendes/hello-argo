@@ -53,7 +53,7 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 
 <p>📱 Running on the following commit hash: <strong>%s</strong>.</p>
 
-
+😎
 `
 	carMsgB := []byte(fmt.Sprintf(carMsg, gif, model, value, commitHash))
 	_, _ = w.Write(carMsgB)
