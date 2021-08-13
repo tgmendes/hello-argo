@@ -45,6 +45,15 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
+      - name: Checkout Pull Request
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            PR_URL="${{ github.event.issue.pull_request.url }}"
+            PR_NUM=${PR_URL##*/}
+            echo "Checking out from PR #$PR_NUM based on URL: $PR_URL"
+            hub pr checkout $PR_NUM
+
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -69,6 +78,15 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+
+      - name: Checkout Pull Request
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            PR_URL="${{ github.event.issue.pull_request.url }}"
+            PR_NUM=${PR_URL##*/}
+            echo "Checking out from PR #$PR_NUM based on URL: $PR_URL"
+            hub pr checkout $PR_NUM
 
       - name: Get commit hash
         run: echo $(git rev-parse HEAD)
