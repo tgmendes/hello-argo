@@ -12,6 +12,8 @@ func main() {
 
 	if *servicePtr == "svc-hello" {
 		app.RunHello(*servicePtr, ":8080")
+	} else if *servicePtr == "svc-giffer" {
+		app.RunGiffer(":8080")
 	} else {
 		app.RunCarValue(*servicePtr, ":8080")
 	}
