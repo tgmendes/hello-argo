@@ -44,7 +44,7 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 	value := rand.Intn(upperValue-lowerValue) + lowerValue
 	gif := getCarGIF(model)
 
-	carMsg := `<h1>🚗 Car Valuation Service! 🏎</h1>
+	carMsg := `<h1>🚗 Car Valuation service! 🏎</h1>
 <div>
 <iframe src="%s" frameborder="0" width="800"></iframe>
 </div>
