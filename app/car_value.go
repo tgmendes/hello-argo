@@ -51,7 +51,7 @@ func carValue(w http.ResponseWriter, r *http.Request, cmdFlag string) {
 <hr \>
 <p>🤑 Based on our calculations, this is what your <strong>%s</strong> is worth: £%d 🎉</p>
 
-<p>📱 Running on the following commit hash: %s.</p>
+<p>📱 Running on the following commit hash: <strong>%s</strong>.</p>
 
 
 `
